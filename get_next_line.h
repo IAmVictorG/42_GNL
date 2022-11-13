@@ -6,7 +6,7 @@
 /*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 13:19:30 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/13 01:24:25 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/13 02:37:00 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <string.h>
 
 # ifndef BUFFER_SIZE
-#  define  BUFFER_SIZE 4
+#  define  BUFFER_SIZE 3
 # endif
 
 char	*get_next_line(int fd);
