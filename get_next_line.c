@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
+/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/13 23:05:30 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/14 14:26:37 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ char	*add_buffer_to_line(char *line, int fd)
 {
 	static char	*remains;
 	char		*buffer;
+	char		*line_remains;
 	char		*new_line;
 	int			i;
 	int			j;
@@ -42,36 +43,49 @@ char	*add_buffer_to_line(char *line, int fd)
 	buffer = NULL;
 	if (remains)
 	{
-		new_line = ft_strjoin(line, remains);
+		line_remains = ft_strjoin(line, remains);
 		free(remains);
 		remains = NULL;
 	}
-	printf("Buffer : %p\n", buffer);
+	//printf("Buffer : %p\n", buffer);
 	buffer = get_buffer(fd, buffer);
-	printf("Buffer : %p\n", buffer);
+	//printf("Buffer : %p\n", buffer);
 	if (!buffer)
 		return (NULL);
 	while (buffer[i] != '\0' && buffer[i] != '\n')
 		i++;
 	if (buffer[i] != '\n' && i != 0)//i != 0 pareil que buffer[0] != '\0' 
 	{
-		printf("OUI\nline%p\n", line);
-		printf("new_line %p\n", new_line);
-		new_line = ft_strjoin(line, buffer);
+		//printf("OUI\nline%p\n", line);
+		//printf("new_line %p\n", new_line);
+		if (line_remains)
+			new_line = ft_strjoin(line_remains, buffer);
+		else
+			new_line = ft_strjoin(line, buffer);
 		//free(line);
-		printf("line %p\n", line);
-		printf("new_line %p\n", new_line);
+		//printf("line %p\n", line);
+		//printf("new_line %p\n", new_line);
 		free(buffer);
 		buffer = NULL;
-		printf("buffer %p\n", buffer);
-		printf("linelast %p\n", line);
+		//printf("buffer %p\n", buffer);
+		//printf("linelast %p\n", line);
 		line = NULL;
-		printf("linelast %p\n", line);
+		//printf("linelast %p\n", line);
 		return (add_buffer_to_line(new_line, fd));
 	}
-	
-	printf("NON\n");
-	new_line = ft_strnjoin(line, buffer, i + 1);
+	if (buffer[i] == '\0' && i != BUFFER_SIZE)
+		return (buffer);
+	//printf("NON\n");
+	if (line_remains)
+		new_line = ft_strnjoin(line_remains, buffer, i + 1);
+	else
+		new_line = ft_strnjoin(line, buffer, i + 1);
+	remains = malloc(BUFFER_SIZE - i);
+	while (buffer[i + 1])
+	{
+		remains[j++] = buffer[i++ + 1];
+	}
+	remains[j] = '\0';
 	free(buffer);
 	if (new_line[0] == '\0')
 	{
@@ -86,18 +100,19 @@ char	*get_next_line(int fd)
 {
 	char	*line;
 	char	*buffertest;
+	char	*result;
 
 	buffertest = NULL;
 	line = "";
 	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	line = add_buffer_to_line(line, fd);
-	if (line == NULL)
+	result = add_buffer_to_line(line, fd);
+	if (result == NULL)
 	{
-		free(line);
+		free(result);
 		return (NULL);
 	}
-	return (line);
+	return (result);
 }
 
 int main(int argc, char const *argv[])
@@ -105,11 +120,11 @@ int main(int argc, char const *argv[])
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
 
-	while (result = get_next_line(fd))
+	while ((result = get_next_line(fd)))
 	{	
 		if (result == NULL)
 			return (0);
-		printf("%s\n", result);
+		printf("%s", result);
 		free(result);
 	}
 	return 0;
