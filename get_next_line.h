@@ -6,7 +6,7 @@
 /*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 13:19:30 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/14 14:20:15 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/14 21:05:55 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <string.h>
 
 # ifndef BUFFER_SIZE
-#  define  BUFFER_SIZE 5
+#  define  BUFFER_SIZE 200
 # endif
 
 char	*get_next_line(int fd);
@@ -29,5 +29,6 @@ char	*ft_strnjoin(char const *s1, char const *s2, int n);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strchr(const char *str, int c);
 char	*ft_custom_join(char *s1, char *s2);
+char	*ft_strdup(char *src);
 
 #endif

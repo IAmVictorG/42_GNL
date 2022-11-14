@@ -6,7 +6,7 @@
 /*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/14 14:26:37 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/14 21:16:02 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*get_buffer(int fd, char *buffer)
 	return (buffer);
 }
 
-char	*add_buffer_to_line(char *line, int fd)
+char	*create_line(char *line, int fd)
 {
 	static char	*remains;
 	char		*buffer;
@@ -41,59 +41,68 @@ char	*add_buffer_to_line(char *line, int fd)
 	i = 0;
 	j = 0;
 	buffer = NULL;
+	line_remains = ft_strdup(line);
+	if (!line_remains)
+		return (NULL);
 	if (remains)
 	{
+		/*printf("-----------------\n");
+		printf("remainsString : %s\n", remains);
+		printf("-----------------\n");
+		memcpy(line, remains, strlen(remains));
+		printf("memcpyOK\n");
+		printf("line : %s, remains : %lu\n", line, strlen(remains));*/
+		free(line_remains);
 		line_remains = ft_strjoin(line, remains);
 		free(remains);
 		remains = NULL;
 	}
-	//printf("Buffer : %p\n", buffer);
 	buffer = get_buffer(fd, buffer);
-	//printf("Buffer : %p\n", buffer);
 	if (!buffer)
 		return (NULL);
+		
 	while (buffer[i] != '\0' && buffer[i] != '\n')
 		i++;
-	if (buffer[i] != '\n' && i != 0)//i != 0 pareil que buffer[0] != '\0' 
+	if (buffer[i] == '\0')
 	{
-		//printf("OUI\nline%p\n", line);
-		//printf("new_line %p\n", new_line);
-		if (line_remains)
+		if (i != BUFFER_SIZE)
+		{
 			new_line = ft_strjoin(line_remains, buffer);
+			free(line_remains);
+			free(buffer);
+			buffer = NULL;
+			return (new_line);
+		}
 		else
-			new_line = ft_strjoin(line, buffer);
-		//free(line);
-		//printf("line %p\n", line);
-		//printf("new_line %p\n", new_line);
+		{
+			new_line = ft_strjoin(line_remains, buffer);
+			free(line_remains);
+			free(buffer);
+			buffer = NULL;
+			return (create_line(new_line, fd));
+		}
+	}
+	else //(buffer[i] == '\n')
+	{
+		new_line = ft_strnjoin(line_remains, buffer, i + 1);
+		free(line_remains);
+		//printf("Line%p\n", line);
+		remains = malloc(BUFFER_SIZE - i);
+		i++;
+		while (buffer[i])
+		{
+			remains[j++] = buffer[i];
+			i++;
+		}
+		//printf("BUFFER %s\n", buffer);
+		//printf("new_line : %p\n", new_line);
+		//printf("Remains : %p || PLACE %d || ", remains, place);
+		//printf("J %d\n", j);
+		remains[j] = '\0';
 		free(buffer);
 		buffer = NULL;
-		//printf("buffer %p\n", buffer);
-		//printf("linelast %p\n", line);
-		line = NULL;
-		//printf("linelast %p\n", line);
-		return (add_buffer_to_line(new_line, fd));
+		return (new_line);
 	}
-	if (buffer[i] == '\0' && i != BUFFER_SIZE)
-		return (buffer);
-	//printf("NON\n");
-	if (line_remains)
-		new_line = ft_strnjoin(line_remains, buffer, i + 1);
-	else
-		new_line = ft_strnjoin(line, buffer, i + 1);
-	remains = malloc(BUFFER_SIZE - i);
-	while (buffer[i + 1])
-	{
-		remains[j++] = buffer[i++ + 1];
-	}
-	remains[j] = '\0';
-	free(buffer);
-	if (new_line[0] == '\0')
-	{
-		free(new_line);
-		free(remains);
-		return (NULL);
-	}
-	return (new_line);
 }
 
 char	*get_next_line(int fd)
@@ -103,25 +112,27 @@ char	*get_next_line(int fd)
 	char	*result;
 
 	buffertest = NULL;
-	line = "";
+	line = ft_strdup("");
+	if (!line)
+		return (NULL);
 	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	result = add_buffer_to_line(line, fd);
-	if (result == NULL)
+	result = create_line(line, fd);
+	free(line);
+	if (result == NULL || result[0] == '\0')
 	{
-		free(result);
 		return (NULL);
 	}
 	return (result);
 }
 
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
 
 	while ((result = get_next_line(fd)))
-	{	
+	{
 		if (result == NULL)
 			return (0);
 		printf("%s", result);
@@ -129,3 +140,4 @@ int main(int argc, char const *argv[])
 	}
 	return 0;
 }
+*/

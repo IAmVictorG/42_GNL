@@ -6,7 +6,7 @@
 /*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:46:08 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/14 14:16:53 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/14 21:05:48 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,21 @@ char	*ft_strnjoin(char const *s1, char const *s2, int n)
 		result[i++] = *s2++;
 	result[i] = '\0';
 	return (result);
+}
+
+char	*ft_strdup(char *src)
+{
+	char	*str;
+	int		i;
+
+	i = 0;
+	str = (char *)malloc((ft_strlen(src) + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	while (*src)
+		str[i++] = *src++;
+	str[i] = '\0';
+	return (str);
 }
 
 char	*ft_strchr(const char *str, int c)
