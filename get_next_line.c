@@ -35,6 +35,8 @@ char	*create_line(char *line, int fd)
 	char		*buffer;
 	char		*line_remains;
 	char		*new_line;
+	char 		*new_remains;
+	char		*result;
 	int			i;
 	int			j;
 
@@ -46,23 +48,26 @@ char	*create_line(char *line, int fd)
 		return (NULL);
 	if (remains)
 	{
-		if ((ft_strchr(remains, '\n')))
+		printf("FIRST REAMINS %s\n", remains);
+		if ((new_remains = ft_strchr(remains, '\n')))
 		{
-			//free(remains);
-			//free(line_remains);
-			//return (ft_strchr(remains, '\n'));
-			printf("-----------------\n");
+			
+			ft_memcpy(remains, ++new_remains, ft_strlen(new_remains));
 			printf("remainsString : %s\n", remains);
-			printf("-----------------\n");
+			free(line_remains);
+			free(remains);
+			free(line);
+			result = malloc(2);
+			result[0] = '1';
+			result[1] = '\0';
+			//free(result);
+			return (result);
 		}
 		buffer = get_buffer(fd, buffer);
 		free(line_remains);
 		line_remains = ft_strjoin(line, remains);
 		free(remains);
 		remains = NULL;
-		/*memcpy(line, remains, strlen(remains));
-		printf("memcpyOK\n");
-		printf("line : %s, remains : %lu\n", line, strlen(remains));*/
 	}
 	else
 		buffer = get_buffer(fd, buffer);
@@ -87,18 +92,12 @@ char	*create_line(char *line, int fd)
 	{
 		new_line = ft_strnjoin(line_remains, buffer, i + 1);
 		free(line_remains);
-		//printf("Line%p\n", line);
 		remains = malloc(BUFFER_SIZE - i);
 		i++;
 		while (buffer[i])
 		{
-			remains[j++] = buffer[i];
-			i++;
+			remains[j++] = buffer[i++];
 		}
-		//printf("BUFFER %s\n", buffer);
-		//printf("new_line : %p\n", new_line);
-		//printf("Remains : %p || PLACE %d || ", remains, place);
-		//printf("J %d\n", j);
 		remains[j] = '\0';
 		free(buffer);
 		buffer = NULL;
