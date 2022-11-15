@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 13:19:30 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/14 21:05:55 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/15 01:00:23 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/14 21:16:02 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/15 01:04:17 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char	*create_line(char *line, int fd)
 		free(remains);
 		remains = NULL;
 	}
+	free(line);
 	buffer = get_buffer(fd, buffer);
 	if (!buffer)
 		return (NULL);
@@ -112,21 +113,22 @@ char	*get_next_line(int fd)
 	char	*result;
 
 	buffertest = NULL;
+	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
+		return (NULL);
 	line = ft_strdup("");
 	if (!line)
 		return (NULL);
-	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
-		return (NULL);
 	result = create_line(line, fd);
-	free(line);
+	//free(line);
 	if (result == NULL || result[0] == '\0')
 	{
+		free(result);
 		return (NULL);
 	}
 	return (result);
 }
 
-/*int main(int argc, char const *argv[])
+/*int main(void)
 {
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
@@ -134,7 +136,9 @@ char	*get_next_line(int fd)
 	while ((result = get_next_line(fd)))
 	{
 		if (result == NULL)
+		{
 			return (0);
+		}
 		printf("%s", result);
 		free(result);
 	}
