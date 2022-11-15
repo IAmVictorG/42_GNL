@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
+/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/15 01:04:17 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/15 12:36:32 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,27 @@ char	*create_line(char *line, int fd)
 		return (NULL);
 	if (remains)
 	{
-		/*printf("-----------------\n");
-		printf("remainsString : %s\n", remains);
-		printf("-----------------\n");
-		memcpy(line, remains, strlen(remains));
-		printf("memcpyOK\n");
-		printf("line : %s, remains : %lu\n", line, strlen(remains));*/
+		if ((ft_strchr(remains, '\n')))
+		{
+			//free(remains);
+			//free(line_remains);
+			//return (ft_strchr(remains, '\n'));
+			printf("-----------------\n");
+			printf("remainsString : %s\n", remains);
+			printf("-----------------\n");
+		}
+		buffer = get_buffer(fd, buffer);
 		free(line_remains);
 		line_remains = ft_strjoin(line, remains);
 		free(remains);
 		remains = NULL;
+		/*memcpy(line, remains, strlen(remains));
+		printf("memcpyOK\n");
+		printf("line : %s, remains : %lu\n", line, strlen(remains));*/
 	}
+	else
+		buffer = get_buffer(fd, buffer);
 	free(line);
-	buffer = get_buffer(fd, buffer);
 	if (!buffer)
 		return (NULL);
 		
@@ -66,22 +74,14 @@ char	*create_line(char *line, int fd)
 		i++;
 	if (buffer[i] == '\0')
 	{
-		if (i != BUFFER_SIZE)
-		{
-			new_line = ft_strjoin(line_remains, buffer);
-			free(line_remains);
-			free(buffer);
-			buffer = NULL;
+		new_line = ft_strjoin(line_remains, buffer);
+		free(line_remains);
+		free(buffer);
+		buffer = NULL;
+		if (i != BUFFER_SIZE)	
 			return (new_line);
-		}
 		else
-		{
-			new_line = ft_strjoin(line_remains, buffer);
-			free(line_remains);
-			free(buffer);
-			buffer = NULL;
 			return (create_line(new_line, fd));
-		}
 	}
 	else //(buffer[i] == '\n')
 	{
@@ -128,20 +128,19 @@ char	*get_next_line(int fd)
 	return (result);
 }
 
-/*int main(void)
+int main(void)
 {
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
-
+	int i = 0;
 	while ((result = get_next_line(fd)))
 	{
 		if (result == NULL)
 		{
 			return (0);
 		}
-		printf("%s", result);
+		printf("Result %d : %s", i++, result);
 		free(result);
 	}
 	return 0;
 }
-*/
