@@ -20,12 +20,15 @@ char	*get_next_line(int fd)
 	char 	**result;
 
 	buffertest = NULL;
+	result = NULL;
 	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	line = ft_strdup("");
-	if (!line)
-		return (NULL);
+
 	new_line = line_constructor(line, fd, result);
+	//free(result[0]);
+	free(result);
+	//free(line);
 	if (new_line == NULL || new_line[0] == '\0')
 	{
 		//free(line);
@@ -55,37 +58,24 @@ char	*get_buffer(int fd)
 	return (buffer);
 }
 
-char	*testfunc(char *remains)
-{
-	char	*result;
-	int		index;
-
-	index = isCharInString(remains, '\n');
-	if (index != -1)
-	{
-		strncpy(result, remains, index + 1);
-	}
-	free(remains);
-	remains = NULL;
-	return (result);
-}
-
 char	*line_constructor(char *line, int fd, char **result)
 {
 	static char	*remains;
 	char		*buffer;
 	char		*temp;
 	int			index;
-	printf("REMAINS %s\n", remains);
+	//printf("REMAINS %s\n", remains);
 	if (remains && isCharInString(remains, '\n') != -1)
 	{
 		result = split_first_char(remains, '\n');
 		free(remains);
+		remains = NULL;
 		//remains = result[1];
 		
 		remains = malloc(ft_strlen(result[1]) + 1);
 		ft_memmove(remains, result[1], ft_strlen(result[1]) + 1);
 		free(result[1]);
+		result[1] = NULL;
 		/*printf("%p %s\n", remains, remains);
 		printf("%p %s\n", result[1], result[1]);*/
 		return (result[0]);
@@ -93,6 +83,8 @@ char	*line_constructor(char *line, int fd, char **result)
 	if (remains)
 	{
 		temp = line;
+		free(line);
+		line = NULL;
 		line = ft_strjoin(temp, remains);
 		free(temp);
 		free(remains);
