@@ -22,7 +22,7 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	int		s_s1;
 	int		s_s2;
@@ -43,7 +43,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (result);
 }
 
-char	*ft_strnjoin(char const *s1, char const *s2, int n)
+char	*ft_strnjoin(char *s1, char *s2, int n)
 {
 	int		s_s1;
 	int		s_s2;
@@ -79,34 +79,89 @@ char	*ft_strdup(char *src)
 	return (str);
 }
 
-void	*ft_memcpy(void *dest, const void *src, size_t n)
+int	isCharInString(const char *str, int c)
 {
-	size_t	i;
-	char	*char_dest;
-	char	*char_src;
+	int	i;
 
-	char_dest = (char *)dest;
-	char_src = (char *)src;
 	i = 0;
-	if (!dest && !src)
-		return (NULL);
-	while (i < n)
+	while (str[i])
 	{
-		char_dest[i] = char_src[i];
+		if (str[i] == (char)c)
+			return (i);
 		i++;
 	}
-	return (dest);
+	if ((char)c == str[i])
+		return (i);
+	return (-1);
 }
 
-char	*ft_strchr(const char *str, int c)
+char	*get_left_str(char *str, char c)
 {
-	while (*str)
+	char	*result;
+	int		i;
+	int		j;
+
+	j = 0;
+	i = 0;
+	while (str[i] != c && str[i])
+		i++;
+	i++;
+	result = (char *)malloc((ft_strlen(str) - i + 1) * sizeof(char));
+	while (str[i])
+		result[j++] = str[i++];
+	result[j] = '\0';
+	return (result);
+}
+
+char **split_first_char(char *str, char c)
+{
+	char	**result;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	result = (char **)malloc((2) * sizeof(char *));
+	if (!result)
+		return (NULL);
+	while (str[i] != c)
+		i++;
+	result[0] = (char *)malloc((i + 1 + 1) * sizeof(char));
+	result[1] = (char *)malloc((ft_strlen(str) - i + 1) * sizeof(char));
+	if (!result[0] || !result[1])
+		return (NULL);
+	i = 0;
+	while (str[i] != c)
 	{
-		if (*str == (char)c)
-			return ((char *) str);
-		str++;
+		result[0][i] = str[i];
+		i++;
 	}
-	if ((char)c == *str)
-		return ((char *)str);
-	return (NULL);
+	result[0][i] = c;
+	result[0][i++ + 1] = '\0';
+	while (str[i])
+		result[1][j++] = str[i++];
+	result[1][j] = '\0';
+	return(result);
+}
+
+void	*ft_memmove(void *dst, const void *src, size_t n)
+{
+	char	*char_src;
+	char	*char_dst;
+
+	char_src = (char *)src;
+	char_dst = (char *)dst;
+	if (dst == NULL && src == NULL)
+		return (NULL);
+	if (dst > src && (src + n) > dst)
+		while (n--)
+			*(char_dst + n) = *(char_src + n);
+	else
+	{
+		while (n--)
+		{
+			*(char_dst++) = *(char_src++);
+		}
+	}
+	return (dst);
 }

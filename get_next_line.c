@@ -12,9 +12,35 @@
 
 #include "get_next_line.h"
 
-char	*get_buffer(int fd, char *buffer)
+char	*get_next_line(int fd)
+{
+	char	*line;
+	char	*buffertest;
+	char	*new_line;
+	char 	**result;
+
+	buffertest = NULL;
+	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
+		return (NULL);
+	line = ft_strdup("");
+	if (!line)
+		return (NULL);
+	new_line = line_constructor(line, fd, result);
+	if (new_line == NULL || new_line[0] == '\0')
+	{
+		//free(line);
+		free(new_line);
+		return (NULL);
+	}
+	/*if (result[1])
+		free(result[1]);*/
+	return (new_line);
+}
+
+char	*get_buffer(int fd)
 {
 	int	bytes_read;
+	char	*buffer;
 
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
@@ -29,102 +55,71 @@ char	*get_buffer(int fd, char *buffer)
 	return (buffer);
 }
 
-char	*create_line(char *line, int fd)
+char	*testfunc(char *remains)
+{
+	char	*result;
+	int		index;
+
+	index = isCharInString(remains, '\n');
+	if (index != -1)
+	{
+		strncpy(result, remains, index + 1);
+	}
+	free(remains);
+	remains = NULL;
+	return (result);
+}
+
+char	*line_constructor(char *line, int fd, char **result)
 {
 	static char	*remains;
 	char		*buffer;
-	char		*line_remains;
-	char		*new_line;
-	char 		*new_remains;
-	char		*result;
-	int			i;
-	int			j;
-
-	i = 0;
-	j = 0;
-	buffer = NULL;
-	line_remains = ft_strdup(line);
-	if (!line_remains)
-		return (NULL);
+	char		*temp;
+	int			index;
+	printf("REMAINS %s\n", remains);
+	if (remains && isCharInString(remains, '\n') != -1)
+	{
+		result = split_first_char(remains, '\n');
+		free(remains);
+		//remains = result[1];
+		
+		remains = malloc(ft_strlen(result[1]) + 1);
+		ft_memmove(remains, result[1], ft_strlen(result[1]) + 1);
+		free(result[1]);
+		/*printf("%p %s\n", remains, remains);
+		printf("%p %s\n", result[1], result[1]);*/
+		return (result[0]);
+	}
 	if (remains)
 	{
-		printf("FIRST REAMINS %s\n", remains);
-		if ((new_remains = ft_strchr(remains, '\n')))
-		{
-			
-			ft_memcpy(remains, ++new_remains, ft_strlen(new_remains));
-			printf("remainsString : %s\n", remains);
-			free(line_remains);
-			free(remains);
-			free(line);
-			result = malloc(2);
-			result[0] = '1';
-			result[1] = '\0';
-			//free(result);
-			return (result);
-		}
-		buffer = get_buffer(fd, buffer);
-		free(line_remains);
-		line_remains = ft_strjoin(line, remains);
+		temp = line;
+		line = ft_strjoin(temp, remains);
+		free(temp);
 		free(remains);
 		remains = NULL;
 	}
-	else
-		buffer = get_buffer(fd, buffer);
-	free(line);
-	if (!buffer)
-		return (NULL);
-		
-	while (buffer[i] != '\0' && buffer[i] != '\n')
-		i++;
-	if (buffer[i] == '\0')
+	buffer = get_buffer(fd);
+	index = isCharInString(buffer, '\n');
+	while (index == -1)
 	{
-		new_line = ft_strjoin(line_remains, buffer);
-		free(line_remains);
-		free(buffer);
-		buffer = NULL;
-		if (i != BUFFER_SIZE)	
-			return (new_line);
-		else
-			return (create_line(new_line, fd));
-	}
-	else //(buffer[i] == '\n')
-	{
-		new_line = ft_strnjoin(line_remains, buffer, i + 1);
-		free(line_remains);
-		remains = malloc(BUFFER_SIZE - i);
-		i++;
-		while (buffer[i])
+		temp = line;
+		line = ft_strjoin(temp, buffer);
+		free(temp);
+		if (ft_strlen(buffer) != BUFFER_SIZE)
 		{
-			remains[j++] = buffer[i++];
+			free(buffer);
+			return (line);
 		}
-		remains[j] = '\0';
 		free(buffer);
-		buffer = NULL;
-		return (new_line);
+		buffer = get_buffer(fd);
+		index = isCharInString(buffer, '\n');
 	}
-}
-
-char	*get_next_line(int fd)
-{
-	char	*line;
-	char	*buffertest;
-	char	*result;
-
-	buffertest = NULL;
-	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
-		return (NULL);
-	line = ft_strdup("");
-	if (!line)
-		return (NULL);
-	result = create_line(line, fd);
-	//free(line);
-	if (result == NULL || result[0] == '\0')
-	{
-		free(result);
-		return (NULL);
-	}
-	return (result);
+	temp = line;
+	line = ft_strnjoin(temp, buffer, index + 1);
+	free(temp);
+	remains = get_left_str(buffer, '\n');
+	free(buffer);
+	return (line);
 }
 
 int main(void)
@@ -132,6 +127,16 @@ int main(void)
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
 	int i = 0;
+
+	/*result = get_next_line(fd);
+	printf("Result %d : %s", i++, result);
+	free(result);
+	result = get_next_line(fd);
+	printf("Result %d : %s", i++, result);
+	free(result);
+	result = get_next_line(fd);
+	printf("Result %d : %s", i++, result);
+	free(result);*/
 	while ((result = get_next_line(fd)))
 	{
 		if (result == NULL)

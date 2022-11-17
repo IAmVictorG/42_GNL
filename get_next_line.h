@@ -25,12 +25,17 @@
 # endif
 
 char	*get_next_line(int fd);
-char	*ft_strnjoin(char const *s1, char const *s2, int n);
-char	*ft_strjoin(char const *s1, char const *s2);
+char	*line_constructor(char *line, int fd, char **result);
+char	*get_buffer(int fd);
+char    **split_first_char(char *str, char c);
+int	    isCharInString(const char *str, int c);
+char	*ft_strnjoin(char *s1, char *s2, int n);
+char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strchr(const char *str, int c);
 char	*ft_custom_join(char *s1, char *s2);
 char	*ft_strdup(char *src);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*get_left_str(char *str, char c);
+void	*ft_memmove(void *dst, const void *src, size_t n);
 size_t	ft_strlen(const char *str);
 
 #endif
