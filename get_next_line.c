@@ -26,7 +26,7 @@ char	*get_next_line(int fd)
 	line = ft_strdup("");
 	temp = line;
 	line = line_constructor(temp, fd, result);
-	free(temp);
+	//free(temp);
 	if (line == NULL || line[0] == '\0')
 	{
 		//free(line);
@@ -77,6 +77,7 @@ char	*line_constructor(char *line, int fd, char **result)
 		result[1] = NULL;
 		temp = line;
 		line = ft_strjoin(line, result[0]);
+		free(temp);
 		free(result[0]);
 		result[0] = NULL;
 		free(result);
