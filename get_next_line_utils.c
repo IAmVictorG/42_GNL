@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:46:08 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/15 12:20:26 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/17 12:33:43 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ char	*ft_strdup(char *src)
 	return (str);
 }
 
-int	isCharInString(const char *str, int c)
+int	is_char_in_string(const char *str, int c)
 {
 	int	i;
 
@@ -113,7 +113,7 @@ char	*get_left_str(char *str, char c)
 	return (result);
 }
 
-char **split_first_char(char *str, char c)
+char	**split_first_char(char *str, char c)
 {
 	char	**result;
 	int		i;
@@ -130,38 +130,13 @@ char **split_first_char(char *str, char c)
 	result[1] = (char *)malloc((ft_strlen(str) - i + 1) * sizeof(char));
 	if (!result[0] || !result[1])
 		return (NULL);
-	i = 0;
-	while (str[i] != c)
-	{
+	i = -1;
+	while (str[++i] != c)
 		result[0][i] = str[i];
-		i++;
-	}
 	result[0][i] = c;
 	result[0][i++ + 1] = '\0';
 	while (str[i])
 		result[1][j++] = str[i++];
 	result[1][j] = '\0';
-	return(result);
-}
-
-void	*ft_memmove(void *dst, const void *src, size_t n)
-{
-	char	*char_src;
-	char	*char_dst;
-
-	char_src = (char *)src;
-	char_dst = (char *)dst;
-	if (dst == NULL && src == NULL)
-		return (NULL);
-	if (dst > src && (src + n) > dst)
-		while (n--)
-			*(char_dst + n) = *(char_src + n);
-	else
-	{
-		while (n--)
-		{
-			*(char_dst++) = *(char_src++);
-		}
-	}
-	return (dst);
+	return (result);
 }

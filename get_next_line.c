@@ -6,7 +6,7 @@
 /*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/17 12:15:48 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/17 12:32:55 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*get_next_line(int fd)
 	char	*line;
 	char	*buffertest;
 	char	*temp;
-	char 	**result;
+	char	**result;
 
 	buffertest = NULL;
 	result = NULL;
@@ -26,21 +26,17 @@ char	*get_next_line(int fd)
 	line = ft_strdup("");
 	temp = line;
 	line = line_constructor(temp, fd, result);
-	//free(temp);
 	if (line == NULL || line[0] == '\0')
 	{
-		//free(line);
 		free(line);
 		return (NULL);
 	}
-	/*if (result[1])
-		free(result[1]);*/
 	return (line);
 }
 
 char	*get_buffer(int fd)
 {
-	int	bytes_read;
+	int		bytes_read;
 	char	*buffer;
 
 	buffer = malloc(BUFFER_SIZE + 1);
@@ -62,17 +58,15 @@ char	*line_constructor(char *line, int fd, char **result)
 	char		*buffer;
 	char		*temp;
 	int			index;
-	//printf("REMAINS %s\n", remains);
-	if (remains && isCharInString(remains, '\n') != -1)
+
+	if (remains && is_char_in_string(remains, '\n') != -1)
 	{
 		result = split_first_char(remains, '\n');
 		free(remains);
 		remains = NULL;
 		remains = result[1];
-		
 		remains = malloc(ft_strlen(result[1]) + 1);
 		memcpy(remains, result[1], strlen(result[1]) + 1);
-		//ft_memmove(remains, result[1], ft_strlen(result[1]) + 1);
 		free(result[1]);
 		result[1] = NULL;
 		temp = line;
@@ -82,22 +76,18 @@ char	*line_constructor(char *line, int fd, char **result)
 		result[0] = NULL;
 		free(result);
 		result = NULL;
-		/*printf("%p %s\n", remains, remains);
-		printf("%p %s\n", result[1], result[1]);*/
 		return (line);
 	}
 	if (remains)
 	{
 		temp = line;
-		//free(line);
-		//line = NULL;
 		line = ft_strjoin(temp, remains);
 		free(temp);
 		free(remains);
 		remains = NULL;
 	}
 	buffer = get_buffer(fd);
-	index = isCharInString(buffer, '\n');
+	index = is_char_in_string(buffer, '\n');
 	while (index == -1)
 	{
 		temp = line;
@@ -110,7 +100,7 @@ char	*line_constructor(char *line, int fd, char **result)
 		}
 		free(buffer);
 		buffer = get_buffer(fd);
-		index = isCharInString(buffer, '\n');
+		index = is_char_in_string(buffer, '\n');
 	}
 	temp = line;
 	line = ft_strnjoin(temp, buffer, index + 1);
@@ -120,21 +110,21 @@ char	*line_constructor(char *line, int fd, char **result)
 	return (line);
 }
 
-int main(void)
+/*int main(void)
 {
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
 	int i = 0;
 
-	/*result = get_next_line(fd);
-	printf("Result %d : %s", i++, result);
-	free(result);
 	result = get_next_line(fd);
 	printf("Result %d : %s", i++, result);
 	free(result);
 	result = get_next_line(fd);
 	printf("Result %d : %s", i++, result);
-	free(result);*/
+	free(result);
+	result = get_next_line(fd);
+	printf("Result %d : %s", i++, result);
+	free(result);
 	while ((result = get_next_line(fd)))
 	{
 		if (result == NULL)
@@ -146,4 +136,4 @@ int main(void)
 		free(result);
 	}
 	return 0;
-}
+}*/
