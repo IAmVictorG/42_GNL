@@ -6,7 +6,7 @@
 /*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/21 11:12:27 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/21 11:20:38 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ char	*line_is_in_remains(char **line, char **remains)
 	char	**result;
 
 	result = split_at_first_char(*remains, '\n');
-	if (!result)
-		return (NULL);
 	free(*remains);
 	*remains = NULL;
 	*remains = result[1];
@@ -72,7 +70,7 @@ char	*line_is_in_remains(char **line, char **remains)
 	free(result[1]);
 	result[1] = NULL;
 	temp = *line;
-	*line = ft_strnjoin(*line, result[0], ft_strlen(result[0]));
+	*line = ft_strnjoin(temp, result[0], ft_strlen(result[0]));
 	free(temp);
 	free(result[0]);
 	result[0] = NULL;
@@ -126,8 +124,7 @@ char	*line_constructor(char *line, int fd)
 		remains = NULL;
 	}
 	buffer = get_buffer(fd, remains);
-	c_line_with_buffer(&line, &remains, buffer, fd);
-	return (line);
+	return (c_line_with_buffer(&line, &remains, buffer, fd));
 }
 
 /*int main(void)
