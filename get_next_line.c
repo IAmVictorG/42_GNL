@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
+/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/17 23:40:38 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/21 11:12:27 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,16 @@ char	*get_next_line(int fd)
 	char	*line;
 	char	*buffertest;
 	char	*temp;
-	char	**result;
 
 	buffertest = NULL;
-	result = NULL;
 	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	line = ft_strdup("");
+	line = malloc(sizeof(char));
+	*line = '\0';
+	if (!line)
+		return (NULL);
 	temp = line;
-	line = line_constructor(temp, fd, result);
+	line = line_constructor(temp, fd);
 	if (line == NULL || line[0] == '\0')
 	{
 		free(line);
@@ -34,7 +35,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-char	*get_buffer(int fd)
+char	*get_buffer(int fd, char *remains)
 {
 	int		bytes_read;
 	char	*buffer;
@@ -46,67 +47,86 @@ char	*get_buffer(int fd)
 	if (bytes_read < 0)
 	{
 		free(buffer);
+		buffer = NULL;
+		free(remains);
+		remains = NULL;
 		return (NULL);
 	}
 	buffer[bytes_read] = '\0';
 	return (buffer);
 }
 
-char	*line_constructor(char *line, int fd, char **result)
+char	*line_is_in_remains(char **line, char **remains)
 {
-	static char	*remains;
-	char		*buffer;
-	char		*temp;
-	int			index;
+	char	*temp;
+	char	**result;
 
-	if (remains && is_char_in_string(remains, '\n') != -1)
-	{
-		result = split_at_first_char(remains, '\n');
-		free(remains);
-		remains = NULL;
-		remains = result[1];
-		remains = malloc(ft_strlen(result[1]) + 1);
-		memcpy(remains, result[1], strlen(result[1]) + 1);
-		free(result[1]);
-		result[1] = NULL;
-		temp = line;
-		line = ft_strjoin(line, result[0]);
-		free(temp);
-		free(result[0]);
-		result[0] = NULL;
-		free(result);
-		result = NULL;
-		return (line);
-	}
-	if (remains)
-	{
-		temp = line;
-		line = ft_strjoin(temp, remains);
-		free(temp);
-		free(remains);
-		remains = NULL;
-	}
-	buffer = get_buffer(fd);
+	result = split_at_first_char(*remains, '\n');
+	if (!result)
+		return (NULL);
+	free(*remains);
+	*remains = NULL;
+	*remains = result[1];
+	*remains = malloc(ft_strlen(result[1]) + 1);
+	strlcpy(*remains, result[1], strlen(result[1]) + 1);
+	free(result[1]);
+	result[1] = NULL;
+	temp = *line;
+	*line = ft_strnjoin(*line, result[0], ft_strlen(result[0]));
+	free(temp);
+	free(result[0]);
+	result[0] = NULL;
+	free(result);
+	result = NULL;
+	return (*line);
+}
+
+char	*c_line_with_buffer(char **line, char **remains, char *buffer, int fd)
+{
+	char	*temp;
+	int		index;
+
 	index = is_char_in_string(buffer, '\n');
 	while (index == -1)
 	{
-		temp = line;
-		line = ft_strjoin(temp, buffer);
+		temp = *line;
+		*line = ft_strnjoin(temp, buffer, ft_strlen(buffer));
 		free(temp);
 		if (ft_strlen(buffer) != BUFFER_SIZE)
 		{
 			free(buffer);
-			return (line);
+			return (*line);
 		}
 		free(buffer);
-		buffer = get_buffer(fd);
+		buffer = get_buffer(fd, *remains);
 		index = is_char_in_string(buffer, '\n');
 	}
-	temp = line;
-	line = ft_strnjoin(temp, buffer, index + 1);
+	temp = *line;
+	*line = ft_strnjoin(temp, buffer, index + 1);
 	free(temp);
-	remains = get_left_str(buffer, '\n');
+	*remains = get_left_str(buffer, '\n');
 	free(buffer);
+	return (*line);
+}
+
+char	*line_constructor(char *line, int fd)
+{
+	static char	*remains;
+	char		*buffer;
+	char		*temp;
+
+	if (remains && is_char_in_string(remains, '\n') != -1)
+		return (line_is_in_remains(&line, &remains));
+	if (remains)
+	{
+		temp = line;
+		line = ft_strnjoin(temp, remains, ft_strlen(remains));
+		free(temp);
+		free(remains);
+		remains = NULL;
+	}
+	buffer = get_buffer(fd, remains);
+	c_line_with_buffer(&line, &remains, buffer, fd);
 	return (line);
 }
 
