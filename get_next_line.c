@@ -6,7 +6,7 @@
 /*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/17 12:32:55 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/17 23:40:38 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*line_constructor(char *line, int fd, char **result)
 
 	if (remains && is_char_in_string(remains, '\n') != -1)
 	{
-		result = split_first_char(remains, '\n');
+		result = split_at_first_char(remains, '\n');
 		free(remains);
 		remains = NULL;
 		remains = result[1];

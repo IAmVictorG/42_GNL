@@ -6,7 +6,7 @@
 /*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:46:08 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/17 12:33:43 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/17 23:38:10 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ char	*get_left_str(char *str, char c)
 	return (result);
 }
 
-char	**split_first_char(char *str, char c)
+char	**split_at_first_char(char *str, char c)
 {
 	char	**result;
 	int		i;
