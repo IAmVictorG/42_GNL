@@ -3,51 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:46:08 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/21 10:31:59 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/11/28 21:36:57 by victorgiord      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *str)
+size_t	ft_strlen(char *str)
 {
 	size_t	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i] != '\0')
 		i++;
 	return (i);
 }
 
-char	*ft_strnjoin(char *s1, char *s2, int n)
+void	ft_strnjoin(char **s1, char **s2, int n)
 {
-	int		s_s1;
-	int		s_s2;
 	int		i;
+	int		j;
+	int		k;
 	char	*result;
 
 	i = 0;
-	s_s1 = ft_strlen(s1);
-	s_s2 = ft_strlen(s2);
-	result = malloc((s_s1 + s_s2 + 1) * sizeof(char));
-	if (!result || !s1 || !s2)
-		return (NULL);
-	while (*s1)
-		result[i++] = *s1++;
-	while (*s2 && n-- > 0)
-		result[i++] = *s2++;
-	result[i] = '\0';
-	return (result);
+	j = 0;
+	k = 0;
+	if (!(*s1) || !(*s1))
+		return ;
+	result = malloc((ft_strlen(*s1) + ft_strlen(*s2) + 1) * sizeof(char));
+	if (!result)
+		return ;
+	while ((*s1)[i])
+		result[k++] = (*s1)[i++];
+	while ((*s2)[j] && n-- > 0)
+		result[k++] = (*s2)[j++];
+	result[k] = '\0';
+	free(*s1);
+	*s1 = result;
 }
 
-int	is_char_in_string(const char *str, int c)
+int	is_char_in_string(char *str, int c)
 {
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (-1);
 	while (str[i])
 	{
 		if (str[i] == (char)c)
@@ -59,7 +66,7 @@ int	is_char_in_string(const char *str, int c)
 	return (-1);
 }
 
-char	*get_left_str(char *str, char c)
+char	*get_right_str(char *str, char c)
 {
 	char	*result;
 	int		i;
@@ -67,6 +74,8 @@ char	*get_left_str(char *str, char c)
 
 	j = 0;
 	i = 0;
+	if (!str)
+		return (NULL);
 	while (str[i] != c && str[i])
 		i++;
 	i++;
