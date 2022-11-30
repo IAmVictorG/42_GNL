@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: victorgiordani01 <victorgiordani01@stud    +#+  +:+       +#+        */
+/*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/28 21:34:23 by victorgiord      ###   ########.fr       */
+/*   Updated: 2022/11/30 13:58:02 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_next_line(int fd)
 	int		r;
 
 	buffertest = NULL;
-	if (fd < 0 || read(fd, buffertest, 0) < 0 || BUFFER_SIZE < 1)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
 	line = malloc(sizeof(char));
 	if (!line)
@@ -86,7 +86,12 @@ char	*c_line_with_buffer(char **line, char **remains, char *buffer, int fd)
 			return (*line);
 		}
 		free(buffer);
-		get_buffer(fd, &buffer);
+		if (get_buffer(fd, &buffer) < 0)
+		{
+			free(*remains);
+			*remains = NULL;
+			return (NULL);
+		}
 		index = is_char_in_string(buffer, '\n');
 	}
 	ft_strnjoin(line, &buffer, index + 1);
@@ -112,14 +117,11 @@ int	line_constructor(char **line, int fd)
 		free(remains);
 		remains = NULL;
 	}
-	if (get_buffer(fd, &buffer) == -1)
-		return (-1);
-	if (buffer == NULL || buffer[0] == '\0')
+	if (get_buffer(fd, &buffer) < 0)
 	{
-		if (buffer)
-			free(buffer);
 		free(remains);
-		return (ft_strlen(*line));
+		remains = NULL;
+		return (-1);
 	}
 	c_line_with_buffer(line, &remains, buffer, fd);
 	return (ft_strlen(*line));
@@ -127,15 +129,6 @@ int	line_constructor(char **line, int fd)
 
 /*int main(void)
 {
-	char *str1 = strdup("HELLO ");
-	char *str2 = strdup("WORLD");
-	printf("%s\n", str1);
-	printf("%s\n", str2);
-	ft_strnjoin(&str1, &str2, ft_strlen(str2));
-	printf("%s\n", str1);
-	printf("%s\n", str2);
-	free(str1);
-	free(str2);
 	int fd = open("test.txt", O_RDONLY);
 	char *result;
 	int i = 0;
