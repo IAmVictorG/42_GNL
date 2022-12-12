@@ -6,7 +6,7 @@
 /*   By: vgiordan <vgiordan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/12 22:38:18 by victorgiord       #+#    #+#             */
-/*   Updated: 2022/11/30 13:58:02 by vgiordan         ###   ########.fr       */
+/*   Updated: 2022/12/12 18:37:24 by vgiordan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,40 +103,46 @@ char	*c_line_with_buffer(char **line, char **remains, char *buffer, int fd)
 
 int	line_constructor(char **line, int fd)
 {
-	static char	*remains;
+	static char	*remains[2048];
 	char		*buffer;
 
-	if (remains && is_char_in_string(remains, '\n') != -1)
+	if (remains[fd] && is_char_in_string(remains[fd], '\n') != -1)
 	{
-		line_is_in_remains(line, &remains);
+		line_is_in_remains(line, &remains[fd]);
 		return (ft_strlen(*line));
 	}
-	if (remains)
+	if (remains[fd])
 	{
-		ft_strnjoin(line, &remains, ft_strlen(remains));
-		free(remains);
-		remains = NULL;
+		ft_strnjoin(line, &remains[fd], ft_strlen(remains[fd]));
+		free(remains[fd]);
+		remains[fd] = NULL;
 	}
 	if (get_buffer(fd, &buffer) < 0)
 	{
-		free(remains);
-		remains = NULL;
+		free(remains[fd]);
+		remains[fd] = NULL;
 		return (-1);
 	}
-	c_line_with_buffer(line, &remains, buffer, fd);
+	c_line_with_buffer(line, &remains[fd], buffer, fd);
 	return (ft_strlen(*line));
 }
 
-/*int main(void)
+int main(void)
 {
-	int fd = open("test.txt", O_RDONLY);
+	int fd1 = open("test.txt", O_RDONLY);
+	int fd2 = open("test2.txt", O_RDONLY);
 	char *result;
 	int i = 0;
 
-	while ((result = get_next_line(fd)))
+	printf("Result %d : %s", i++, get_next_line(fd1));
+	printf("Result %d : %s", i++, get_next_line(fd1));
+	printf("Result %d : %s", i++, get_next_line(fd2));
+	printf("Result %d : %s", i++, get_next_line(fd1));
+	printf("Result %d : %s", i++, get_next_line(fd2));
+	/*while ((result = get_next_line(fd)))
 	{
 		printf("Result %d : %s", i++, result);
 		free(result);
-	}
+	}*/
 	return 0;
-}*/
+}
